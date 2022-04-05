@@ -42,7 +42,7 @@ describe("simple type with no domain", () => {
 
   test("toString", () => {
     expect(num.toString()).toBe("num: number = 0");
-    expect(str.toString()).toBe("str: string = \"\"");
+    expect(str.toString()).toBe('str: string = ""');
   });
 
   test("clear and get default value", () => {
