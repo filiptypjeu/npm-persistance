@@ -35,6 +35,10 @@ export class Variable<T> {
     }
   };
 
+  public toString(domain?: string): string {
+    return `${domain ? `${domain}/` : ""}${this.name}: ${typeof this.defaultValue} = ${JSON.stringify(this.get(domain))}`;
+  }
+
   /**
    * Get the value of this variable in a specific or the default domain.
    */

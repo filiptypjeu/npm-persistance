@@ -40,6 +40,11 @@ describe("simple type with no domain", () => {
     expect(ls.getItem("__PERSISTANCE__")).toBe('{"str":"","num":0}');
   });
 
+  test("toString", () => {
+    expect(num.toString()).toBe("num: number = 0");
+    expect(str.toString()).toBe("str: string = \"\"");
+  });
+
   test("clear and get default value", () => {
     str.clear();
     expect(str.get()).toBe("hello");
@@ -71,6 +76,12 @@ describe("simple type with specific domain", () => {
     expect(ls.length).toBe(2);
     expect(ls.getItem("abc")).toBe('{"num":42}');
     expect(ls.getItem("def")).toBe('{"num":43}');
+  });
+
+  test("toString", () => {
+    expect(num.toString("abc")).toBe("abc/num: number = 42");
+    expect(num.toString("def")).toBe("def/num: number = 43");
+    expect(num.toString()).toBe("num: number = 123");
   });
 
   test("clear and get default value", () => {
@@ -118,6 +129,10 @@ describe("BooleanVariable", () => {
     expect(ls.length).toBe(2);
     expect(ls.getItem("__PERSISTANCE__")).toBe('{"t":false,"f":true}');
     expect(ls.getItem("DOMAIN")).toBe('{"t":true}');
+  });
+
+  test("toString", () => {
+    expect(t.toString()).toBe("t: boolean = false");
   });
 
   test("clear and get default value", () => {
@@ -171,6 +186,10 @@ describe("complex type", () => {
     expect(ls.length).toBe(2);
     expect(ls.getItem("__PERSISTANCE__")).toBe('{"obj":{"a":["a"],"b":[42,43],"c":{"a":["b","c"],"b":[2,3]}}}');
     expect(ls.getItem("1234")).toBe('{"obj":{"a":["a"],"b":[42,43],"c":{"a":["b","c"],"b":[2,3]}}}');
+  });
+
+  test("toString", () => {
+    expect(obj.toString("1234")).toBe('1234/obj: object = {"a":["a"],"b":[42,43],"c":{"a":["b","c"],"b":[2,3]}}');
   });
 
   test("clear and get value", () => {
