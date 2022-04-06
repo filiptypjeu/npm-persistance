@@ -1,4 +1,4 @@
-interface ILocalStorage {
+export interface ILocalStorage {
   getItem(itemName: string): string | null;
   setItem(itemName: string, value: string): void;
 }
