@@ -23,7 +23,9 @@ export class Variable<T> {
     public callback?: (newValue: T, domainName?: string) => void
   ) {}
 
-  protected itemName = (domainName?: string) => domainName || "__PERSISTANCE__";
+  protected domainToString = (domain?: DomainName): string | undefined => domain?.toString();
+
+  protected itemName = (domain?: DomainName): string => this.domainToString(domain) || "__PERSISTANCE__";
 
   protected getItem(domain?: DomainName): IItem {
     const str = this.ls.getItem(this.itemName(domain?.toString()));
@@ -33,7 +35,7 @@ export class Variable<T> {
   protected setItem(object: IItem, domain?: DomainName): void {
     this.ls.setItem(this.itemName(domain?.toString()), JSON.stringify(object));
     if (this.callback) {
-      this.callback(this.get(domain), domain?.toString());
+      this.callback(this.get(domain), this.domainToString(domain));
     }
   };
 
