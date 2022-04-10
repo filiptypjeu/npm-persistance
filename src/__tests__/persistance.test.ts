@@ -162,7 +162,7 @@ describe("complex type", () => {
 
   test("get default value", () => {
     expect(obj.get()).toEqual(d);
-    expect(obj.get("1234")).toEqual(d);
+    expect(obj.get(1234)).toEqual(d);
   });
 
   const value: ITestA = {
@@ -178,8 +178,8 @@ describe("complex type", () => {
     expect(obj.set(value));
     expect(obj.get()).toEqual(value);
 
-    expect(obj.set(value, "1234"));
-    expect(obj.get("1234")).toEqual(value);
+    expect(obj.set(value, 1234));
+    expect(obj.get(1234)).toEqual(value);
   });
 
   test("check raw localstorage items", () => {
@@ -189,15 +189,15 @@ describe("complex type", () => {
   });
 
   test("toString", () => {
-    expect(obj.toString("1234")).toBe('1234/obj: object = {"a":["a"],"b":[42,43],"c":{"a":["b","c"],"b":[2,3]}}');
+    expect(obj.toString(1234)).toBe('1234/obj: object = {"a":["a"],"b":[42,43],"c":{"a":["b","c"],"b":[2,3]}}');
   });
 
   test("clear and get value", () => {
     obj.clear();
     expect(obj.get()).toEqual(d);
 
-    obj.clear("1234");
-    expect(obj.get("1234")).toEqual(d);
+    obj.clear(1234);
+    expect(obj.get(1234)).toEqual(d);
   });
 });
 

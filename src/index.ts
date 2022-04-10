@@ -13,36 +13,38 @@ interface IItem {
   [key: string]: any;
 }
 
+type DomainName = string | number;
+
 export class Variable<T> {
   constructor(
     public readonly name: string,
     public defaultValue: T,
     public readonly ls: ILocalStorage,
-    public callback?: (newValue: T, domain?: string) => void
+    public callback?: (newValue: T, domainName?: string) => void
   ) {}
 
-  protected itemName = (domain?: string) => domain || "__PERSISTANCE__";
+  protected itemName = (domainName?: string) => domainName || "__PERSISTANCE__";
 
-  protected getItem(domain?: string): IItem {
-    const str = this.ls.getItem(this.itemName(domain));
+  protected getItem(domain?: DomainName): IItem {
+    const str = this.ls.getItem(this.itemName(domain?.toString()));
     return str ? JSON.parse(str) : {};
   };
 
-  protected setItem(object: IItem, domain?: string): void {
-    this.ls.setItem(this.itemName(domain), JSON.stringify(object));
+  protected setItem(object: IItem, domain?: DomainName): void {
+    this.ls.setItem(this.itemName(domain?.toString()), JSON.stringify(object));
     if (this.callback) {
       this.callback(this.get(domain), domain?.toString());
     }
   };
 
-  public toString(domain?: string): string {
+  public toString(domain?: DomainName): string {
     return `${domain ? `${domain}/` : ""}${this.name}: ${typeof this.defaultValue} = ${JSON.stringify(this.get(domain))}`;
   }
 
   /**
    * Get the value of this variable in a specific or the default domain.
    */
-  public get(domain?: string): T {
+  public get(domain?: DomainName): T {
     const d = this.getItem(domain);
     return this.name in d ? d[this.name] : this.defaultValue;
   };
@@ -50,7 +52,7 @@ export class Variable<T> {
   /**
    * Set the value of this variable in a specific or the default domain.
    */
-  public set(value: T, domain?: string): void {
+  public set(value: T, domain?: DomainName): void {
     const d = this.getItem(domain);
     d[this.name] = value;
     this.setItem(d, domain);
@@ -59,7 +61,7 @@ export class Variable<T> {
   /**
    * Reset this variable to the default value.
    */
-  public clear(domain?: string): void {
+  public clear(domain?: DomainName): void {
     const d = this.getItem(domain);
     delete d[this.name];
     this.setItem(d, domain);
@@ -72,7 +74,7 @@ export class BooleanVariable extends Variable<boolean> {
    *
    * @returns the new state.
    */
-  public toggle(domain?: string): boolean {
+  public toggle(domain?: DomainName): boolean {
     const newValue = !this.get(domain);
     this.set(newValue, domain);
     return newValue;
