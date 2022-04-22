@@ -178,6 +178,43 @@ describe("BooleanVariable", () => {
   });
 });
 
+describe("array of numbers", () => {
+  afterAll(() => ls.clear());
+
+  const arr = new Variable<number[]>("arr", [1, 2, 3], ls);
+
+  test("get default values", () => {
+    expect(arr.get()).toEqual([1, 2, 3]);
+  });
+
+  test("set and get values", () => {
+    arr.set([42, 43]);
+    expect(arr.get()).toEqual([42, 43]);
+  });
+
+  test("set with string", () => {
+    expect(arr.setWithString("")).toBe(false);
+    expect(arr.setWithString("abc")).toBe(false);
+    expect(arr.setWithString("123")).toBe(false);
+    expect(arr.setWithString("[44, 45]")).toBe(true);
+    expect(arr.get()).toEqual([44, 45]);
+  });
+
+  test("check raw localstorage items", () => {
+    expect(ls.length).toBe(1);
+    expect(ls.getItem("__PERSISTANCE__")).toBe('{"arr":[44,45]}');
+  });
+
+  test("toString", () => {
+    expect(arr.toString()).toBe("arr: object = [44,45]");
+  });
+
+  test("clear and get default value", () => {
+    arr.clear();
+    expect(arr.get()).toEqual([1, 2, 3]);
+  });
+});
+
 describe("complex type", () => {
   afterAll(() => ls.clear());
 
