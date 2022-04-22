@@ -9,30 +9,34 @@ export interface IVariableOptions<T> {
   description?: string;
 }
 
-interface IItem {
-  [key: string]: any;
+interface IItem<T> {
+  [key: string]: T;
 }
 
 type DomainName = string | number;
 
 export class Variable<T> {
+  protected m_type;
+
   constructor(
     public readonly name: string,
     public defaultValue: T,
     public readonly ls: ILocalStorage,
     public callback?: (newValue: T, domainName?: string) => void
-  ) {}
+  ) {
+    this.m_type = typeof this.defaultValue;
+  }
 
   protected domainToString = (domain?: DomainName): string | undefined => domain?.toString();
 
   protected itemName = (domain?: DomainName): string => this.domainToString(domain) || "__PERSISTANCE__";
 
-  protected getItem(domain?: DomainName): IItem {
+  protected getItem(domain?: DomainName): IItem<T> {
     const str = this.ls.getItem(this.itemName(domain?.toString()));
     return str ? JSON.parse(str) : {};
   };
 
-  protected setItem(object: IItem, domain?: DomainName): void {
+  protected setItem(object: IItem<T>, domain?: DomainName): void {
     this.ls.setItem(this.itemName(domain?.toString()), JSON.stringify(object));
     if (this.callback) {
       this.callback(this.get(domain), this.domainToString(domain));
@@ -61,6 +65,26 @@ export class Variable<T> {
   };
 
   /**
+   * Set the value of this variable using a string that is then parsed correctly depending on the type of the variable value.
+   *
+   * @returns true if the value was set successfully.
+   */
+  public setWithString(value: string, domain?: DomainName): boolean {
+    let v: T;
+    if (this.m_type === "string") v = value as any;
+    else {
+      try {
+        v = JSON.parse(value);
+      } catch {
+        return false;
+      }
+    }
+    if (typeof v !== this.m_type) return false;
+    this.set(v, domain);
+    return true;
+  };
+
+  /**
    * Reset this variable to the default value.
    */
   public clear(domain?: DomainName): void {
@@ -80,5 +104,21 @@ export class BooleanVariable extends Variable<boolean> {
     const newValue = !this.get(domain);
     this.set(newValue, domain);
     return newValue;
+  };
+
+  /**
+   * Set the value of this variable using a string that is then parsed correctly depending on the type of the variable value.
+   *
+   * @returns true always.
+   */
+  public override setWithString(value: string, domain?: DomainName): boolean {
+    let v: any;
+    try {
+      v = JSON.parse(value);
+    } catch {
+      v = value;
+    }
+    this.set(v ? true : false, domain);
+    return true;
   };
 }

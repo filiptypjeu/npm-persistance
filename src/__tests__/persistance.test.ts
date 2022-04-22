@@ -15,10 +15,10 @@ describe("simple type with no domain", () => {
   });
 
   test("set and get values", () => {
-    expect(str.set("AAA"));
+    str.set("AAA");
     expect(str.get()).toBe("AAA");
 
-    expect(num.set(321));
+    num.set(321);
     expect(num.get()).toBe(321);
   });
 
@@ -27,11 +27,21 @@ describe("simple type with no domain", () => {
     expect(ls.getItem("__PERSISTANCE__")).toBe('{"str":"AAA","num":321}');
   });
 
+  test("set with string", () => {
+    expect(str.setWithString("dfg")).toBe(true);
+    expect(str.get()).toBe("dfg");
+
+    expect(num.setWithString("")).toBe(false);
+    expect(num.setWithString("abc")).toBe(false);
+    expect(num.setWithString("1234")).toBe(true);
+    expect(num.get()).toBe(1234);
+  });
+
   test("set and get falsy values", () => {
-    expect(str.set(""));
+    str.set("");
     expect(str.get()).toBe("");
 
-    expect(num.set(0));
+    num.set(0);
     expect(num.get()).toBe(0);
   });
 
@@ -64,11 +74,20 @@ describe("simple type with specific domain", () => {
     expect(num.get("def")).toBe(123);
   });
 
+  test("set with string", () => {
+    expect(num.setWithString("", "abc")).toBe(false);
+    expect(num.get("abc")).toBe(123);
+    expect(num.setWithString("abc", "abc")).toBe(false);
+    expect(num.get("abc")).toBe(123);
+    expect(num.setWithString("1234", "abc")).toBe(true);
+    expect(num.get("abc")).toBe(1234);
+  });
+
   test("set and get values", () => {
-    expect(num.set(42, "abc"));
+    num.set(42, "abc");
     expect(num.get("abc")).toBe(42);
 
-    expect(num.set(43, "def"));
+    num.set(43, "def");
     expect(num.get("def")).toBe(43);
   });
 
@@ -109,6 +128,21 @@ describe("BooleanVariable", () => {
     expect(t.get()).toBe(true);
     expect(f.get()).toBe(false);
     expect(f.get("DOMAIN")).toBe(false);
+  });
+
+  test("set with string", () => {
+    expect(t.setWithString("0")).toBe(true);
+    expect(t.get()).toBe(false);
+    expect(t.setWithString("123")).toBe(true);
+    expect(t.get()).toBe(true);
+    expect(t.setWithString("")).toBe(true);
+    expect(t.get()).toBe(false);
+    expect(t.setWithString("abc")).toBe(true);
+    expect(t.get()).toBe(true);
+    expect(t.setWithString("false")).toBe(true);
+    expect(t.get()).toBe(false);
+    expect(t.setWithString("true")).toBe(true);
+    expect(t.get()).toBe(true);
   });
 
   test("toggle and get values", () => {
@@ -175,10 +209,10 @@ describe("complex type", () => {
   };
 
   test("set and get value", () => {
-    expect(obj.set(value));
+    obj.set(value);
     expect(obj.get()).toEqual(value);
 
-    expect(obj.set(value, 1234));
+    obj.set(value, 1234);
     expect(obj.get(1234)).toEqual(value);
   });
 
